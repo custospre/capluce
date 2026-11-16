@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Radar Controladoria - atualizar</title>
+  <style>
+    body { margin: 0; min-height: 100vh; display: flex; align-items: center; justify-content: center;
+           background: #112B20; color: #E8D9A8; font-family: sans-serif; text-align: center; padding: 24px; }
+    p { max-width: 320px; line-height: 1.5; }
+    a { color: #D4AF37; }
+  </style>
+</head>
+<body>
+  <div>
+    <h2>Radar Controladoria</h2>
+    <p id="msg">Atualizando o aplicativo neste aparelho...</p>
+    <p><a href="./">Abrir o aplicativo</a></p>
+  </div>
+  <script>
+    // Limpa a cópia antiga guardada pelo navegador (service worker e cache de
+    // arquivos). NÃO apaga os clientes salvos (ficam no armazenamento local).
+    (async function () {
+      var msg = document.getElementById('msg');
+      try {
+        if ('serviceWorker' in navigator) {
+          var regs = await navigator.serviceWorker.getRegistrations();
+          for (var i = 0; i < regs.length; i++) { await regs[i].unregister(); }
+        }
+        if (window.caches) {
+          var chaves = await caches.keys();
+          for (var j = 0; j < chaves.length; j++) { await caches.delete(chaves[j]); }
+        }
+        msg.textContent = 'Pronto. Abrindo a versão nova...';
+      } catch (e) {
+        msg.textContent = 'Toque em "Abrir o aplicativo".';
+      }
+      setTimeout(function () { location.replace('./?v=' + Date.now()); }, 1500);
+    })();
+  </script>
+</body>
+</html>
